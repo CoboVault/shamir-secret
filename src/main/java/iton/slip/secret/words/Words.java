@@ -20,20 +20,16 @@
  */
 package iton.slip.secret.words;
 
-import iton.bip.mnemonic.words.IWordList;
+
 
 /**
  * Source: https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt
  */
-public enum Words implements IWordList {
+public enum Words{
     INSTANCE;
-
-    @Override
     public String getWord(final int index) {
         return words[index];
     }
-
-    @Override
     public char getSpace() {
         return ' ';
     }

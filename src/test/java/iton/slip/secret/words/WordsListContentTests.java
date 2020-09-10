@@ -23,7 +23,7 @@
  */
 package iton.slip.secret.words;
 
-import iton.bip.mnemonic.words.IWordList;
+
 import java.security.NoSuchAlgorithmException;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -39,7 +39,7 @@ public class WordsListContentTests {
     public WordsListContentTests() {
     }
     
-    private final IWordList wordList = Words.INSTANCE;
+    private final Words wordList = Words.INSTANCE;
 
     
     
