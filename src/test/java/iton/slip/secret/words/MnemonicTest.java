@@ -25,44 +25,41 @@ package iton.slip.secret.words;
 
 import iton.slip.secret.Share;
 import iton.slip.secret.SharedSecretException;
+import org.junit.*;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
- *
  * @author Andrei
  */
 public class MnemonicTest {
-    
+
     private static final Map<String, Integer> MAP = new HashMap<>();
-    
+
     public MnemonicTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
-       
+
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
- 
+
     /**
      * Test of indicesFromMnemonic method, of class Mnemonic.
      */
@@ -73,13 +70,13 @@ public class MnemonicTest {
         String result = Mnemonic.INSTANCE.indicesToMnemonic(indices);
         assertEquals(mnemonic, result);
     }
-    
+
     @Test
     public void testEncodeDecodeMnemonic() throws SharedSecretException {
         String[] mnemonics = new String[]{
-            "humidity disease academic always aluminum jewelry energy woman receiver strategy amuse duckling lying evidence network walnut tactics forget hairy rebound impulse brother survive clothes stadium mailman rival ocean reward venture always armed unwrap",
-            "eraser senior decision smug corner ruin rescue cubic angel tackle skin skunk program roster trash rumor slush angel flea amazing"};
-        
+                "humidity disease academic always aluminum jewelry energy woman receiver strategy amuse duckling lying evidence network walnut tactics forget hairy rebound impulse brother survive clothes stadium mailman rival ocean reward venture always armed unwrap",
+                "eraser senior decision smug corner ruin rescue cubic angel tackle skin skunk program roster trash rumor slush angel flea amazing"};
+
         for (String mnemonic : mnemonics) {
             Share share = Mnemonic.INSTANCE.decode(mnemonic);
             String result = Mnemonic.INSTANCE.encode(share);

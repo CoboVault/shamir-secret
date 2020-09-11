@@ -24,29 +24,28 @@
 package iton.slip.secret.util;
 
 import com.google.common.primitives.Shorts;
-import static iton.slip.secret.Common.BASE_ITERATION_COUNT;
-import static iton.slip.secret.Common.CUSTOMIZATION_STRING;
-import static iton.slip.secret.Common.ROUND_COUNT;
 import iton.slip.secret.SharedSecretException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.spongycastle.crypto.params.KeyParameter;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import static iton.slip.secret.Common.*;
+
 /**
- *
  * @author ITON Solutions
  */
 public class Crypto {
 
     // encrypt master with a passphrase
     public static byte[] encrypt(short id,
-            byte iteration_exponent,
-            byte[] master, String passphrase) throws SharedSecretException {
+                                 byte iteration_exponent,
+                                 byte[] master, String passphrase) throws SharedSecretException {
         // get salt
         byte[] salt = new byte[CUSTOMIZATION_STRING.length + Short.BYTES];
         System.arraycopy(CUSTOMIZATION_STRING, 0, salt, 0, CUSTOMIZATION_STRING.length);
@@ -66,8 +65,8 @@ public class Crypto {
 
     // decrypt encrypted master with a passphrase
     public static byte[] decrypt(short id,
-            byte iteration_exponent,
-            byte[] encrypted_master, String passphrase) throws SharedSecretException {
+                                 byte iteration_exponent,
+                                 byte[] encrypted_master, String passphrase) throws SharedSecretException {
         // get salt
         byte[] salt = new byte[CUSTOMIZATION_STRING.length + Short.BYTES];
         System.arraycopy(CUSTOMIZATION_STRING, 0, salt, 0, CUSTOMIZATION_STRING.length);
@@ -98,7 +97,7 @@ public class Crypto {
         KeyParameter key = (KeyParameter) generator.generateDerivedMacParameters(IR.length * Byte.SIZE);
         return key.getKey();
     }
-    
+
     public static byte[] digest(byte[] random_data, byte[] shared_secret) throws NoSuchAlgorithmException, InvalidKeyException {
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(random_data, "HmacSHA256"));

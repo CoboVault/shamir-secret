@@ -30,37 +30,35 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- *
  * @author Andrei
  */
 public class SharedSecretGenerate128 {
-    
+
     public SharedSecretGenerate128() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Test
     public void testGenerateRestore() throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
         byte iteration_exponent = 0;
@@ -85,7 +83,7 @@ public class SharedSecretGenerate128 {
     @Test
     public void test() throws NoSuchAlgorithmException, SharedSecretException, InvalidKeyException {
         String s = "6f692adbf222c6edbd210be3053fa1f3";
-        String[] m = new String[] {
+        String[] m = new String[]{
                 "drove enlarge actress academic avoid clogs alien client result scandal cultural network physics failure legend tenant research involve cause together",
                 "drove enlarge become academic dwarf tactics elevator playoff velvet triumph impulse loud surface velvet station evoke phrase fiction glimpse papa",
                 "drove enlarge change academic crucial senior manual corner temple necklace width alien style aquatic emperor burden educate gross deal dress",
@@ -97,7 +95,7 @@ public class SharedSecretGenerate128 {
                 "drove enlarge legend academic benefit response woman else slush promise ladybug adjust tackle duration modern crazy briefing video ting deploy"
         };
         SharedSecret shared = new SharedSecret();
-        String ss = Hex.toHexString(shared.combine(new String[]{m[0],m[8]},""));
+        String ss = Hex.toHexString(shared.combine(new String[]{m[0], m[8]}, ""));
         System.out.println(ss);
     }
 
@@ -106,9 +104,9 @@ public class SharedSecretGenerate128 {
 
         String passphrase = "alcatraz";
         String secret = "cd87c628f1ef7747db8c19f9c906ce25";
-        
+
         String[] mnemonics = new String[]{
-            "biology enlarge deal romp chest beam pencil retreat desert ticket isolate clothes describe paper furl crucial involve funding welfare jury"
+                "biology enlarge deal romp chest beam pencil retreat desert ticket isolate clothes describe paper furl crucial involve funding welfare jury"
         };
 
         SharedSecret shared = new SharedSecret();
@@ -116,16 +114,16 @@ public class SharedSecretGenerate128 {
         String master = Hex.toHexString(master_secret);
         assertEquals(secret, master);
     }
-    
+
     @Test
     public void testRestore2() throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
 
         String passphrase = "alcatraz";
         String secret = "cd87c628f1ef7747db8c19f9c906ce25";
-        
+
         String[] mnemonics = new String[]{
-            "biology enlarge academic scared canyon worthy spirit evoke blessing fatigue wisdom angel forget artist burning anatomy switch cradle welfare spit",
-            "biology enlarge academic shadow divorce cleanup speak lungs maximum desert mayor spend ocean decorate prevent pulse force payment secret moment",
+                "biology enlarge academic scared canyon worthy spirit evoke blessing fatigue wisdom angel forget artist burning anatomy switch cradle welfare spit",
+                "biology enlarge academic shadow divorce cleanup speak lungs maximum desert mayor spend ocean decorate prevent pulse force payment secret moment",
         };
 
         SharedSecret shared = new SharedSecret();
@@ -133,17 +131,17 @@ public class SharedSecretGenerate128 {
         String master = Hex.toHexString(master_secret);
         assertEquals(secret, master);
     }
-    
+
     @Test
     public void testRestore3() throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
 
         String passphrase = "alcatraz";
         String secret = "cd87c628f1ef7747db8c19f9c906ce25";
-        
+
         String[] mnemonics = new String[]{
-            "biology enlarge away shaft blessing staff plastic laser require fraction texture welcome mixed reject trend email dilemma decent regular boring",
-            "biology enlarge away round dream alpha manager company should liquid fangs always rebound suitable parking mansion flexible briefing costume beaver",
-            "biology enlarge away scatter describe math glance gesture funding typical midst climate image raspy jacket hanger drift enjoy shadow focus",
+                "biology enlarge away shaft blessing staff plastic laser require fraction texture welcome mixed reject trend email dilemma decent regular boring",
+                "biology enlarge away round dream alpha manager company should liquid fangs always rebound suitable parking mansion flexible briefing costume beaver",
+                "biology enlarge away scatter describe math glance gesture funding typical midst climate image raspy jacket hanger drift enjoy shadow focus",
         };
 
         SharedSecret shared = new SharedSecret();
@@ -151,4 +149,4 @@ public class SharedSecretGenerate128 {
         String master = Hex.toHexString(master_secret);
         assertEquals(secret, master);
     }
- }
+}

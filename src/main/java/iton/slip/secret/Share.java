@@ -25,19 +25,13 @@ package iton.slip.secret;
 
 import static iton.slip.secret.Common.ID_LENGTH_BITS;
 import static iton.slip.secret.Common.RADIX_BITS;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author ITON Solutions
- * 
+ * <p>
  * Represents a single mnemonic share and its metadata
  */
 public class Share {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Share.class);
-
     public int id;
     public int iteration_exponent;
     public int group_index;
@@ -51,13 +45,13 @@ public class Share {
     }
 
     public Share(short id,
-            byte iteration_exponent,
-            byte group_index,
-            byte group_threshold,
-            byte group_count,
-            byte member_index,
-            byte member_threshold,
-            byte[] value) {
+                 byte iteration_exponent,
+                 byte group_index,
+                 byte group_threshold,
+                 byte group_count,
+                 byte member_index,
+                 byte member_threshold,
+                 byte[] value) {
 
         this.id = id;
         this.iteration_exponent = iteration_exponent;
@@ -70,14 +64,13 @@ public class Share {
     }
 
     public String toMnemonics(short id,
-            byte iteration_exponent,
-            byte group_index,
-            byte group_threshold,
-            byte group_count,
-            byte member_index,
-            byte member_threshold,
-            byte[] value)
-    {
+                              byte iteration_exponent,
+                              byte group_index,
+                              byte group_threshold,
+                              byte group_count,
+                              byte member_index,
+                              byte member_threshold,
+                              byte[] value) {
         short[] words = new short[20];
         words[0] = (short) (id >> (ID_LENGTH_BITS - RADIX_BITS));
         words[1] = (short) (((id & 0x001F) << 5) + iteration_exponent);

@@ -24,52 +24,49 @@
 package iton.slip.secret.util;
 
 import iton.slip.secret.SharedSecretException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.*;
+
+import static org.junit.Assert.assertArrayEquals;
 
 /**
- *
  * @author Andrei
  */
 public class CryptoTest {
-    
+
     public CryptoTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
     /**
      * Test of encrypt method, of class Crypto.
+     *
      * @throws iton.slip.secret.SharedSecretException
      */
     @Test
     public void testEncryptDecrypt() throws SharedSecretException {
         String master_secret = "bb54aac4b89dc868ba37d9cc21b2cece";
-        short id = (short)1;
+        short id = (short) 1;
         byte iteration_exponent = 0;
         byte[] master = master_secret.getBytes();
         String passphrase = "ALCATRAZ";
         byte[] encrypted_master = Crypto.encrypt(id, iteration_exponent, master, passphrase);
-        byte[] master_result =  Crypto.decrypt(id, iteration_exponent, encrypted_master, passphrase);
+        byte[] master_result = Crypto.decrypt(id, iteration_exponent, encrypted_master, passphrase);
         assertArrayEquals(master_result, master);
-        
+
     }
 }

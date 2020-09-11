@@ -23,31 +23,23 @@
  */
 package iton.slip.secret.words;
 
-import static iton.slip.secret.Common.CHECKSUM_LENGTH_WORDS;
-import static iton.slip.secret.Common.ID_EXP_LENGTH_WORDS;
-import static iton.slip.secret.Common.ITERATION_EXP_LENGTH_BITS;
-import static iton.slip.secret.Common.METADATA_LENGTH_WORDS;
-import static iton.slip.secret.Common.RADIX_BITS;
 import iton.slip.secret.Share;
 import iton.slip.secret.SharedSecretException;
 import iton.slip.secret.util.Checksum;
 import iton.slip.secret.util.Utils;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static iton.slip.secret.Common.*;
 
 /**
- *
  * @author ITON Solutions
  */
 public class Mnemonic {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Mnemonic.class);
-
     public static final Mnemonic INSTANCE = new Mnemonic();
     public static final int WORD_COUNT = 1024;
     private final Map<String, Short> MAP = new HashMap<>();
@@ -121,15 +113,6 @@ public class Mnemonic {
         share.member_index = words[3];
         share.member_threshold = words[4] + 1;
 
-        LOG.debug(String.format("Id=%d Iteration exponent=%d Group index=%d Group threshold=%d Group count=%d Member index=%d Member threshold=%d",
-                share.id,
-                share.iteration_exponent,
-                share.group_index,
-                share.group_threshold,
-                share.group_count,
-                share.member_index,
-                share.member_threshold));
-
         if (share.group_index > share.group_count - 1) {
             throw new SharedSecretException(String.format("Invalid group index (%d), group count is %d",
                     share.group_index,
@@ -161,28 +144,28 @@ public class Mnemonic {
     }
 
     public String encode(int id,
-            int iteration_exponent,
-            int group_index,
-            int group_threshold,
-            int group_count,
-            int member_index,
-            int member_threshold,
-            byte[] value) {
+                         int iteration_exponent,
+                         int group_index,
+                         int group_threshold,
+                         int group_count,
+                         int member_index,
+                         int member_threshold,
+                         byte[] value) {
 
         // Convert the share value from bytes to wordlist indices.
         int value_words = Utils.bitsToWords(value.length * Byte.SIZE);
-        short[] prefix = encodePrefix(id, 
-                iteration_exponent, 
-                group_index, 
-                group_threshold, 
+        short[] prefix = encodePrefix(id,
+                iteration_exponent,
+                group_index,
+                group_threshold,
                 group_count);
-  
+
         int member = ((group_count - 1 & 3) << 8) + (member_index << 4) + (member_threshold - 1);
         // push short value into array
         short[] result = new short[prefix.length + 1];
         System.arraycopy(prefix, 0, result, 0, prefix.length);
         result[prefix.length] = (short) member;
-        
+
         short[] value_indices = bigToIndices(decodeToBig(value), value_words, RADIX_BITS);
         short[] data = Utils.concatenate(result, value_indices);
         short[] checksum = Checksum.create(data);
@@ -249,24 +232,24 @@ public class Mnemonic {
         }
         result.flip();
         byte[] bytes = result.array();
-        
+
         byte[] reverse = new byte[bytes.length];
-        for(int i = 0; i < reverse.length; i ++){
+        for (int i = 0; i < reverse.length; i++) {
             reverse[i] = bytes[reverse.length - i - 1];
         }
         return reverse;
     }
-    
-    private short[] encodePrefix(int id, 
-            int iteration_exponent, 
-            int group_index, 
-            int group_threshold, 
-            int group_count){
-        
+
+    private short[] encodePrefix(int id,
+                                 int iteration_exponent,
+                                 int group_index,
+                                 int group_threshold,
+                                 int group_count) {
+
         BigInteger id_exp = BigInteger.valueOf((id << ITERATION_EXP_LENGTH_BITS) + iteration_exponent);
         short[] indice = bigToIndices(id_exp, ID_EXP_LENGTH_WORDS, RADIX_BITS);
         int group = (group_index << 6) + ((group_threshold - 1) << 2) + ((group_count - 1) >> 2);
-         // push short value into array
+        // push short value into array
         short[] result = new short[indice.length + 1];
         System.arraycopy(indice, 0, result, 0, indice.length);
         result[indice.length] = (short) group;

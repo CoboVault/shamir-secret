@@ -25,14 +25,13 @@
 package iton.slip.secret;
 
 /**
- *
  * @author ITON Solutions
  */
 public final class SharedSecretException extends Exception {
     public SharedSecretException() {
         super("Invalid checksum");
     }
-    
+
     public SharedSecretException(String message) {
         super(message);
     }

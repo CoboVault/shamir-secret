@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author ITON Solutions
  */
 public class Group {
@@ -35,12 +34,12 @@ public class Group {
     public int member_threshold;
     public int member_count;
     public Map<Integer, byte[]> shares = new HashMap<>();
-    
-     public Group(){
-         
-     }
-    
-    public Group(int member_threshold, int member_count){
+
+    public Group() {
+
+    }
+
+    public Group(int member_threshold, int member_count) {
         this.member_threshold = member_threshold;
         this.member_count = member_count;
     }

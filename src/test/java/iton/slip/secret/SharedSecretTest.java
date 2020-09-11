@@ -23,65 +23,62 @@
  */
 package iton.slip.secret;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.spongycastle.util.encoders.Hex;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
  * @author Andrei
  */
 public class SharedSecretTest {
-    
+
     public SharedSecretTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
-       
+
     // 1. Mnemonic with insufficient length
     @Test(expected = SharedSecretException.class)
     public void test1() throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
         String[] mnemonics = new String[]{
-            "junk necklace academic academic acne isolate join hesitate lunar roster dough calcium chemical ladybug amount mobile glasses verify cylinder"
+                "junk necklace academic academic acne isolate join hesitate lunar roster dough calcium chemical ladybug amount mobile glasses verify cylinder"
         };
-        
-        SharedSecret secret = new  SharedSecret();
+
+        SharedSecret secret = new SharedSecret();
         byte[] master_secret = secret.combine(mnemonics, "TREZOR");
         String master = Hex.toHexString(master_secret);
         assertEquals("", master);
     }
-    
+
     // 2. Mnemonic with invalid master secret length
     @Test(expected = SharedSecretException.class)
     public void test2() throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
         String[] mnemonics = new String[]{
-            "fraction necklace academic academic award teammate mouse regular testify coding building member verdict purchase blind camera duration email prepare spirit quarter"
+                "fraction necklace academic academic award teammate mouse regular testify coding building member verdict purchase blind camera duration email prepare spirit quarter"
         };
-        
-        SharedSecret secret = new  SharedSecret();
+
+        SharedSecret secret = new SharedSecret();
         byte[] master_secret = secret.combine(mnemonics, "TREZOR");
         String master = Hex.toHexString(master_secret);
         assertEquals("", master);
     }
- }
+}

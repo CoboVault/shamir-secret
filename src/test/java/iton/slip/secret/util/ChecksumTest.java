@@ -23,34 +23,30 @@
  */
 package iton.slip.secret.util;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author Andrei
  */
 public class ChecksumTest {
-    
+
     public ChecksumTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -60,13 +56,13 @@ public class ChecksumTest {
      */
     @Test
     public void testCreateVerify() {
-        short[] data = new short[]{1,2,3,4,5,6,7,8,9};
+        short[] data = new short[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
         short[] checksum = Checksum.create(data);
 
         short[] result = new short[data.length + checksum.length];
         System.arraycopy(data, 0, result, 0, data.length);
         System.arraycopy(checksum, 0, result, data.length, checksum.length);
         assertTrue(Checksum.verify(result));
-       
+
     }
 }

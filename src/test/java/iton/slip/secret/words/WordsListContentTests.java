@@ -24,35 +24,33 @@
 package iton.slip.secret.words;
 
 
-import java.security.NoSuchAlgorithmException;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author ITON Solutions
  */
 public class WordsListContentTests {
-    
+
     int WORD_COUNT = 1024;
-    
+
     public WordsListContentTests() {
     }
-    
+
     private final Words wordList = Words.INSTANCE;
 
-    
-    
     @Test
-    public void listCheck() throws NoSuchAlgorithmException {
-        
-        for(int i = 0; i < WORD_COUNT; i++){
+    public void listCheck() {
+
+        for (int i = 0; i < WORD_COUNT; i++) {
             int length = wordList.getWord(i).getBytes().length;
-            if(length < 4 || length > 8){
+            if (length < 4 || length > 8) {
                 assertFalse("Incorrect word list", true);
             }
         }
         assertTrue(true);
     }
-    
+
 }

@@ -26,7 +26,6 @@ package iton.slip.secret;
 import iton.slip.secret.util.Utils;
 
 /**
- *
  * @author ITON Solutions
  */
 public class Common {
@@ -48,7 +47,7 @@ public class Common {
     public static final int ROUND_COUNT = 4;    // The number of rounds to use in the Feistel cipher.
     public static final int SECRET_INDEX = 255; // The index of the share containing the shared secret.
     public static final int DIGEST_INDEX = 254; // The index of the share containing the digest of the shared secret.
-    
+
     public static final byte MNEMONIC_MAX_LEN = 8;
     public static final byte MNEMONIC_MIN_LEN = 4;
     public static final byte MNEMONIC_WORDS_MAX = 33;

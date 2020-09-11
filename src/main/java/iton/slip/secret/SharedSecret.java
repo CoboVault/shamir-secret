@@ -24,36 +24,20 @@
 package iton.slip.secret;
 
 import com.google.common.base.CharMatcher;
-import static iton.slip.secret.Common.DIGEST_INDEX;
-import static iton.slip.secret.Common.DIGEST_LENGTH_BYTES;
-import static iton.slip.secret.Common.MAX_SHARE_COUNT;
-import static iton.slip.secret.Common.MIN_STRENGTH_BITS;
-import static iton.slip.secret.Common.MNEMONIC_WORDS_MAX;
-import static iton.slip.secret.Common.MNEMONIC_WORDS_MIN;
-import static iton.slip.secret.Common.SECRET_INDEX;
-import iton.slip.secret.util.Utils;
-import java.util.List;
 import iton.slip.secret.util.Crypto;
+import iton.slip.secret.util.Utils;
 import iton.slip.secret.words.Mnemonic;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
+
+import static iton.slip.secret.Common.*;
 
 /**
- *
  * @author ITON Solutions
  */
 public class SharedSecret {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SharedSecret.class);
-
     public SharedSecret() {
     }
 
@@ -67,8 +51,8 @@ public class SharedSecret {
      * also be used here. Otherwise it will be impossible to recover the
      * original MS from the generated shares.
      *
-     * @param threshold The number of groups required to reconstruct the master
-     * secret.
+     * @param threshold     The number of groups required to reconstruct the master
+     *                      secret.
      * @param shared_secret The encrypted master secret to split.
      * @param share_count
      * @return List of shares
@@ -112,7 +96,7 @@ public class SharedSecret {
             Utils.randomBytes(share);
             shares.put(i, share);
         }
-        
+
         byte[] random_part = new byte[shared_secret.length - DIGEST_LENGTH_BYTES];
         Utils.randomBytes(random_part);
         byte[] mac = Crypto.digest(random_part, shared_secret);
@@ -133,24 +117,24 @@ public class SharedSecret {
      * Returns f(x) given the Shamir shares (x_1, f(x_1)), ... , (x_k, f(x_k)).
      *
      * @param shares: The Shamir shares. type Map<Integer, byte[]>: A map of pairs (x_i,
-     * y_i), where x_i is an integer and y_i is an array of bytes representing
-     * the evaluations of the polynomials in x_i.
-     * @param x: The x coordinate of the result.
+     *                y_i), where x_i is an integer and y_i is an array of bytes representing
+     *                the evaluations of the polynomials in x_i.
+     * @param x:      The x coordinate of the result.
      * @return Evaluations of the polynomials in x. type: bytes[].
      */
     private byte[] interpolate(Map<Integer, byte[]> shares, int x) throws SharedSecretException {
 
         Set<Integer> x_coord = shares.keySet();
-        
-        if(x_coord.contains(x)){
+
+        if (x_coord.contains(x)) {
             return shares.get(x);
         }
-        
+
         Set<Integer> lengths = new HashSet<>();
         shares.values().forEach((item) -> {
             lengths.add(item.length);
         });
-        if(lengths.isEmpty() || lengths.size()> 1){
+        if (lengths.isEmpty() || lengths.size() > 1) {
             throw new SharedSecretException("Invalid set of shares. All share values must have the same length and not de void");
         }
         int length = lengths.iterator().next();
@@ -158,10 +142,10 @@ public class SharedSecret {
         // Logarithm of the product of (x_i - x) for i = 1, ... , k.
         int log_prod = 0;
         log_prod = shares.keySet().stream().map((i) -> Utils.LOG[i ^ x]).reduce(log_prod, Integer::sum);
-        
+
         byte[] share = new byte[length];
-        
-         for (int i : shares.keySet()) {
+
+        for (int i : shares.keySet()) {
             int sum = 0;
             sum = shares.keySet().stream().map((k) -> Utils.LOG[i ^ k]).reduce(sum, Integer::sum);
             // The logarithm of the Lagrange basis polynomial evaluated at x
@@ -192,14 +176,14 @@ public class SharedSecret {
      * shares. This is the user-friendly method to back up a pre-existing secret
      * with the Shamir scheme, optionally protected by a passphrase.
      *
-     * @param groups_threshold: The number of groups required to reconstruct the
-     * master secret.
-     * @param groups: A list of (group group_threshold, group group_count) pairs for each
-     * group, where member_count is the number of shares to generate for the
-     * group and member_threshold is the number of members required to
-     * reconstruct the group secret.
-     * @param master_secret: The master secret to split.
-     * @param passphrase: The passphrase used to encrypt the master secret.
+     * @param groups_threshold:   The number of groups required to reconstruct the
+     *                            master secret.
+     * @param groups:             A list of (group group_threshold, group group_count) pairs for each
+     *                            group, where member_count is the number of shares to generate for the
+     *                            group and member_threshold is the number of members required to
+     *                            reconstruct the group secret.
+     * @param master_secret:      The master secret to split.
+     * @param passphrase:         The passphrase used to encrypt the master secret.
      * @param iteration_exponent: The encryption iteration exponent.
      * @return List of groups mnemonics.
      * @throws iton.slip.secret.SharedSecretException
@@ -237,7 +221,7 @@ public class SharedSecret {
         }
 
         List<String> mnemonics = new ArrayList<>();
-        
+
         short id = Utils.randomBytes();
         byte[] encrypted_master = Crypto.encrypt(id, iteration_exponent, master_secret, passphrase);
         // Get group shares
@@ -287,7 +271,7 @@ public class SharedSecret {
                     throw new SharedSecretException(String.format("Iteration numbers of shares are inconsistent... %d/%d",
                             share.iteration_exponent, root.iteration_exponent));
                 }
-                
+
                 if (share.id != root.id) {
                     throw new SharedSecretException(String.format("Invalid id... %d/%d",
                             share.id, root.id));
@@ -312,18 +296,18 @@ public class SharedSecret {
                 group.member_threshold = share.member_threshold;
                 root.groups.put(share.group_index, group);
             }
-            
-            if(group.member_threshold != share.member_threshold){
+
+            if (group.member_threshold != share.member_threshold) {
                 throw new SharedSecretException(String.format("Mismatching member thresholds... %d/%d", group.member_threshold, share.member_threshold));
             }
-            
-            if(group.shares.containsKey(share.member_index)){
+
+            if (group.shares.containsKey(share.member_index)) {
                 throw new SharedSecretException(String.format("Duplicate member index %d", share.member_index));
             }
             group.shares.put(share.member_index, share.value);
         }
-        
-        if(root.groups.size() < root.group_threshold){
+
+        if (root.groups.size() < root.group_threshold) {
             throw new SharedSecretException(String.format("Insufficient number of mnemonic groups, %d. %d is required", root.groups.size(), root.group_threshold));
         }
         if (root.groups.size() != root.group_threshold) {
@@ -360,7 +344,7 @@ public class SharedSecret {
 
         Groups root = decode(mnemonics);
         Map<Integer, byte[]> group_shares = new HashMap<>();
-        
+
         for (Integer index : root.groups.keySet()) {
             Group group = root.groups.get(index);
             if (group.shares.size() < group.member_threshold) {
@@ -368,28 +352,28 @@ public class SharedSecret {
                         group.shares.size(),
                         group.member_threshold));
             }
-            
+
             byte[] group_share = recover(group.shares);
             group_shares.put(index, group_share);
         }
         byte[] encrypted_master = recover(group_shares);
-        return Crypto.decrypt((short)root.id, (byte)root.iteration_exponent, encrypted_master, passphrase);
+        return Crypto.decrypt((short) root.id, (byte) root.iteration_exponent, encrypted_master, passphrase);
     }
-    
-    private byte[] recover(Map<Integer, byte[]> shares) throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException{
-        
-        if(shares.values().size() == 1){
+
+    private byte[] recover(Map<Integer, byte[]> shares) throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
+
+        if (shares.values().size() == 1) {
             return shares.values().iterator().next();
         }
-        
+
         byte[] shared_secret = interpolate(shares, SECRET_INDEX);
         byte[] digest_share = interpolate(shares, DIGEST_INDEX);
-        
+
         byte[] random_part = Arrays.copyOfRange(digest_share, DIGEST_LENGTH_BYTES, digest_share.length);
         byte[] mac = Crypto.digest(random_part, shared_secret);
         byte[] digest = Arrays.copyOfRange(mac, 0, DIGEST_LENGTH_BYTES);
-        
-        if(!Arrays.equals(digest_share, Utils.concatenate(digest, random_part))){
+
+        if (!Arrays.equals(digest_share, Utils.concatenate(digest, random_part))) {
             throw new SharedSecretException("Invalid digest");
         }
         return shared_secret;

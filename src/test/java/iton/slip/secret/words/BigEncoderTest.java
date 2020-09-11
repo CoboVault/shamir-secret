@@ -23,26 +23,20 @@
  */
 package iton.slip.secret.words;
 
-import static iton.slip.secret.Common.CHECKSUM_LENGTH_WORDS;
-import static iton.slip.secret.Common.ID_EXP_LENGTH_WORDS;
-import static iton.slip.secret.Common.METADATA_LENGTH_WORDS;
-import static iton.slip.secret.Common.RADIX_BITS;
 import iton.slip.secret.SharedSecretException;
 import iton.slip.secret.util.Utils;
+import org.junit.*;
+
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static iton.slip.secret.Common.*;
+import static org.junit.Assert.assertArrayEquals;
 
 /**
- *
  * @author Andrei
  */
 public class BigEncoderTest {
@@ -68,21 +62,21 @@ public class BigEncoderTest {
     @After
     public void tearDown() {
     }
-    
+
     @Test
     public void testBigIntegerToFromIndices() throws SharedSecretException {
         String mnemonic = "humidity disease academic always aluminum jewelry energy woman receiver strategy amuse duckling lying evidence network walnut tactics forget hairy rebound impulse brother survive clothes stadium mailman rival ocean reward venture always armed unwrap";
         short[] indices = Mnemonic.INSTANCE.indicesFromMnemonic(mnemonic);
         BigInteger from = bigFromIndices(indices);
-        short[] result =  bigToIndices(from, indices.length, RADIX_BITS);
+        short[] result = bigToIndices(from, indices.length, RADIX_BITS);
         assertArrayEquals(indices, result);
     }
-    
+
     @Test
     public void testEncodeDecodeWord() throws SharedSecretException {
         String[] mnemonics = new String[]{
-            "humidity disease academic always aluminum jewelry energy woman receiver strategy amuse duckling lying evidence network walnut tactics forget hairy rebound impulse brother survive clothes stadium mailman rival ocean reward venture always armed unwrap",
-            "eraser senior decision smug corner ruin rescue cubic angel tackle skin skunk program roster trash rumor slush angel flea amazing"};
+                "humidity disease academic always aluminum jewelry energy woman receiver strategy amuse duckling lying evidence network walnut tactics forget hairy rebound impulse brother survive clothes stadium mailman rival ocean reward venture always armed unwrap",
+                "eraser senior decision smug corner ruin rescue cubic angel tackle skin skunk program roster trash rumor slush angel flea amazing"};
 
         for (String mnemonic : mnemonics) {
             short[] indices = Mnemonic.INSTANCE.indicesFromMnemonic(mnemonic);
@@ -105,10 +99,10 @@ public class BigEncoderTest {
         BigInteger encoded = decodeToBig(master);
         byte[] result = decodeFromBig(encoded, 32);
         assertArrayEquals(master, result);
-        
-       
+
+
     }
-    
+
     private BigInteger bigFromIndices(short[] indices) {
         BigInteger value = BigInteger.ZERO;
         BigInteger radix = BigInteger.valueOf(1 << RADIX_BITS);
