@@ -1,4 +1,4 @@
-# Shamir secret sharing
+# Shamir secret sharing ![Build Status](https://github.com/CoboVault/shamir-secret/workflows/Java%20CI%20with%20Gradle/badge.svg)
 
 A utility for generating Shamir's shared secrets (SSS) in accordance to the SLIP-0039 specification [see here https://github.com/satoshilabs/slips/blob/master/slip-0039.md].
 
