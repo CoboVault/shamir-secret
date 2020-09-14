@@ -35,6 +35,9 @@ public enum Words {
         return ' ';
     }
 
+    public String[] getWords() {
+        return words;
+    }
     public final static String[] words = new String[]{
             "academic", "acid", "acne", "acquire", "acrobat", "activity", "actress", "adapt", "adequate",
             "adjust", "admit", "adorn", "adult", "advance", "advocate", "afraid", "again", "agency",
