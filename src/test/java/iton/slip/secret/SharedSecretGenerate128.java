@@ -23,6 +23,7 @@
  */
 package iton.slip.secret;
 
+import iton.slip.secret.util.CombinationTest;
 import iton.slip.secret.util.Utils;
 import iton.slip.secret.words.Mnemonic;
 import org.junit.*;
@@ -30,9 +31,11 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -81,9 +84,9 @@ public class SharedSecretGenerate128 {
     }
 
     @Test
-    public void test() throws NoSuchAlgorithmException, SharedSecretException, InvalidKeyException {
+    public void testCombination() throws NoSuchAlgorithmException, SharedSecretException, InvalidKeyException {
         String s = "6f692adbf222c6edbd210be3053fa1f3";
-        String[] m = new String[]{
+        String[] m = new String[] {
                 "drove enlarge actress academic avoid clogs alien client result scandal cultural network physics failure legend tenant research involve cause together",
                 "drove enlarge become academic dwarf tactics elevator playoff velvet triumph impulse loud surface velvet station evoke phrase fiction glimpse papa",
                 "drove enlarge change academic crucial senior manual corner temple necklace width alien style aquatic emperor burden educate gross deal dress",
@@ -95,8 +98,12 @@ public class SharedSecretGenerate128 {
                 "drove enlarge legend academic benefit response woman else slush promise ladybug adjust tackle duration modern crazy briefing video ting deploy"
         };
         SharedSecret shared = new SharedSecret();
-        String ss = Hex.toHexString(shared.combine(new String[]{m[0], m[8]}, ""));
-        System.out.println(ss);
+        List<int[]> combinations = new CombinationTest().generate(m.length,2);
+
+        for (int[] combination : combinations) {
+            byte[] data = shared.combine(new String[]{m[combination[0]], m[combination[1]]}, "");
+            assertArrayEquals(data, Hex.decode(s));
+        }
     }
 
     @Test
