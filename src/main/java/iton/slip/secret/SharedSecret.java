@@ -253,6 +253,35 @@ public class SharedSecret {
 
         return generate(master_secret, "", groups_threshold, groups, (byte) 1);
     }
+    public List<String> generateWithoutEncrypt(
+            byte[] master_secret,
+            byte groups_threshold,
+            List<Group> groups) throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
+
+        List<String> mnemonics = new ArrayList<>();
+
+        short id = Utils.randomBytes();
+        // Get group shares
+        Map<Integer, byte[]> group_shares = split(groups_threshold, master_secret, groups.size());
+        // Get all mnemonics
+        for (int group_index : group_shares.keySet()) {
+            Group group = groups.get(group_index);
+            Map<Integer, byte[]> member_shares = split(group.member_threshold, group_shares.get(group_index), group.member_count);
+            member_shares.keySet().stream().map((member_index) -> Mnemonic.INSTANCE.encode(id,
+                    1,
+                    group_index,
+                    groups_threshold,
+                    groups.size(),
+                    member_index,
+                    group.member_threshold,
+                    member_shares.get(member_index)
+            )).forEach((mnemonic) -> {
+                mnemonics.add(mnemonic);
+            });
+
+        }
+        return mnemonics;
+    }
 
     private Groups decode(String[] mnemonics) throws SharedSecretException {
 
@@ -358,6 +387,36 @@ public class SharedSecret {
         }
         byte[] encrypted_master = recover(group_shares);
         return Crypto.decrypt((short) root.id, (byte) root.iteration_exponent, encrypted_master, passphrase);
+    }
+
+    public byte[] combineWithoutDecrypt(String[] mnemonics) throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {
+
+        if (mnemonics == null || mnemonics.length == 0) {
+            throw new SharedSecretException("The list of mnemonic is empty...");
+        }
+
+        for (String mnemonic : mnemonics) {
+            int length = mnemonic.split(" ").length;
+            if (length < MNEMONIC_WORDS_MIN || length > MNEMONIC_WORDS_MAX) {
+                throw new SharedSecretException(String.format("Mnemonic length is not legal. (length:%d)", mnemonics.length));
+            }
+        }
+
+        Groups root = decode(mnemonics);
+        Map<Integer, byte[]> group_shares = new HashMap<>();
+
+        for (Integer index : root.groups.keySet()) {
+            Group group = root.groups.get(index);
+            if (group.shares.size() < group.member_threshold) {
+                throw new SharedSecretException(String.format("Member number is less than threshold... %d/%d",
+                        group.shares.size(),
+                        group.member_threshold));
+            }
+
+            byte[] group_share = recover(group.shares);
+            group_shares.put(index, group_share);
+        }
+        return recover(group_shares);
     }
 
     private byte[] recover(Map<Integer, byte[]> shares) throws SharedSecretException, NoSuchAlgorithmException, InvalidKeyException {

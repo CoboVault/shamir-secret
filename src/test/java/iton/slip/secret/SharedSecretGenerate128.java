@@ -24,6 +24,7 @@
 package iton.slip.secret;
 
 import iton.slip.secret.util.CombinationTest;
+import iton.slip.secret.util.Crypto;
 import iton.slip.secret.util.Utils;
 import iton.slip.secret.words.Mnemonic;
 import org.junit.*;
@@ -31,7 +32,6 @@ import org.spongycastle.util.encoders.Hex;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -104,6 +104,53 @@ public class SharedSecretGenerate128 {
             byte[] data = shared.combine(new String[]{m[combination[0]], m[combination[1]]}, "");
             assertArrayEquals(data, Hex.decode(s));
         }
+    }
+
+    @Test
+    public void aaa() throws NoSuchAlgorithmException, SharedSecretException, InvalidKeyException {
+        String[] a = new String[]{
+                "tactics cause academic acne august vanish blessing formal carbon axle crazy priest treat practice receiver exchange gather obesity loud forbid",
+                "tactics cause academic agree dominant exhaust grownup woman racism pleasure breathe taste cinema brave loan improve burden network lend chest",
+                "tactics cause academic amazing disease mother discuss galaxy relate fiction frost minister epidemic alcohol resident hybrid cover dwarf endorse burning",
+                "tactics cause academic arcade argue costume erode warn bike unfold huge teacher library ranked mailman expand family dress elevator gasoline",
+        };
+        for (String aa : a) {
+            Share share = Mnemonic.INSTANCE.decode(aa);
+            System.out.println(share);
+        }
+        SharedSecret shared = new SharedSecret();
+        byte[] data1 = shared.combine(new String[]{a[0],a[1],a[2]},"");
+        System.out.println(Hex.toHexString(data1));
+
+
+        byte[] data2 = Crypto.encrypt((short)28516,(byte)1, data1,"");
+        byte[] data3 = Crypto.decrypt((short)28516,(byte)1, data2,"a");
+
+        byte[] data = shared.combine(new String[]{a[0],a[1],a[2]},"a");
+        System.out.println(Hex.toHexString(data3));
+        System.out.println(Hex.toHexString(data));
+    }
+
+    @Test
+    public void testCombineWithoutDecrypt() throws NoSuchAlgorithmException, SharedSecretException, InvalidKeyException {
+        byte[] data = new byte[16];
+        //satoshi costume academic acid activity presence wrote romantic threaten failure clothes guilt ranked mobile network justice adult security music replace
+        //satoshi costume academic agency building bike wavy award retreat station sniff scene coal universe aquatic formal coastal provide wrap blimp
+        List<String> shares = new SharedSecret().generateWithoutEncrypt(data,(byte) 1, Collections.singletonList(new Group(2,2)));
+        for (String share : shares) {
+            System.out.println(share);
+        }
+        Share share = Mnemonic.INSTANCE.decode("satoshi costume academic acid activity presence wrote romantic threaten failure clothes guilt ranked mobile network justice adult security music replace");
+        System.out.println(share);
+        byte[] seed = Crypto.decrypt((short)24997,(byte) 1,data,"");
+        System.out.println(Hex.toHexString(seed));
+
+        byte[] seed1 = Crypto.encrypt((short)24997,(byte) 1,seed,"");
+        byte[] seed2 = Crypto.decrypt((short)24997,(byte) 1,seed1,"a");
+        System.out.println(Hex.toHexString(seed2));
+
+        byte[] result = new SharedSecret().combineWithoutDecrypt(shares.toArray(new String[0]));
+        System.out.println(Hex.toHexString(result));
     }
 
     @Test

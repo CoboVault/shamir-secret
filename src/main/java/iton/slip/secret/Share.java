@@ -23,6 +23,8 @@
  */
 package iton.slip.secret;
 
+import java.util.Arrays;
+
 import static iton.slip.secret.Common.ID_LENGTH_BITS;
 import static iton.slip.secret.Common.RADIX_BITS;
 
@@ -81,5 +83,19 @@ public class Share {
         words[3] <<= 8;
         words[3] = (short) ((member_index << 4) + (member_threshold - 1));
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Share{" +
+                "id=" + id +
+                ", iteration_exponent=" + iteration_exponent +
+                ", group_index=" + group_index +
+                ", group_threshold=" + group_threshold +
+                ", group_count=" + group_count +
+                ", member_index=" + member_index +
+                ", member_threshold=" + member_threshold +
+                ", value=" + Arrays.toString(value) +
+                '}';
     }
 }
